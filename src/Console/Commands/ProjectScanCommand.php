@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use CraigNattrass\ProjectManagement\Models\ProjectEndpoint;
 use CraigNattrass\ProjectManagement\Models\ProjectCliCommand;
+use CraigNattrass\ProjectManagement\Models\ProjectModule;
 
 class ProjectScanCommand extends Command
 {
@@ -162,7 +163,7 @@ class ProjectScanCommand extends Command
      */
     protected function getOrCreateModule(string $slug): ?int
     {
-        $module = \App\Models\ProjectModule::where('slug', $slug)->first();
+        $module = ProjectModule::where('slug', $slug)->first();
         
         if (!$module) {
             // Auto-create common modules
@@ -178,7 +179,7 @@ class ProjectScanCommand extends Command
             ];
 
             if (isset($moduleNames[$slug])) {
-                $module = \App\Models\ProjectModule::create([
+                $module = ProjectModule::create([
                     'name' => $moduleNames[$slug],
                     'slug' => $slug,
                     'status' => 'active',
