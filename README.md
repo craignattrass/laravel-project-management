@@ -413,6 +413,53 @@ php artisan migrate
 php artisan project:scan
 ```
 
+### Recent Updates / Changelog
+
+#### Tab Persistence Feature (Latest)
+**What Changed:**
+- Forms now stay on the current tab after adding/deleting tasks, bugs, or flows
+- Uses URL hash fragments (`#tasks`, `#bugs`, `#flows`, etc.) to maintain tab state
+- Controllers redirect with `->withFragment('tabname')` method
+- JavaScript updated to read URL hash on page load and restore the correct tab
+
+**Upgrade Instructions:**
+1. Pull latest package code: `composer update craignattrass/laravel-project-management`
+2. If you have custom controllers that extend the package:
+   - Update your redirects to use `->route('project-management.index')->withFragment('tabname')`
+   - Example: `return redirect()->route('project-management.index')->with('success', 'Task created')->withFragment('tasks');`
+3. If you copied the view files, update the JavaScript in your view to handle URL hash:
+   ```javascript
+   // On page load, check for hash
+   let activeTab = window.location.hash.substring(1);
+   const validTabs = ['overview', 'modules', 'endpoints', 'commands', 'tasks', 'bugs', 'flows'];
+   if (!activeTab || !validTabs.includes(activeTab)) {
+       activeTab = 'overview';
+   }
+   showTab(activeTab);
+   
+   // In showTab function, add:
+   history.replaceState(null, null, '#' + tabName);
+   ```
+
+#### Route Method Name Fix
+**What Changed:**
+- Fixed route definitions to match actual controller method names
+- Changed non-standard names (createTask, deleteTask) to Laravel conventions (storeTask, destroyTask)
+
+**Fixed Routes:**
+- `createTask` → `storeTask`
+- `deleteTask` → `destroyTask`
+- `createModule` → `storeModule`
+- `deleteModule` → `destroyModule`
+- `createBug` → `storeBug`
+- `deleteBug` → `destroyBug`
+- `createFlow` → `storeFlow`
+- `deleteFlow` → `destroyFlow`
+- `scan` → `scanProject`
+- `assignModuleToEndpoint` → `updateEndpoint`
+
+**Note:** This is automatically fixed when you update the package. No manual changes needed unless you have custom route definitions.
+
 ## Troubleshooting
 
 **Issue: Routes not working**

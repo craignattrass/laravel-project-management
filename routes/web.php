@@ -21,34 +21,34 @@ Route::middleware(config('project-management.middleware', ['web', 'auth']))
         ->name('index');
     
     // Scan project
-    Route::post('/scan', [ProjectManagementController::class, 'scan'])
+    Route::post('/scan', [ProjectManagementController::class, 'scanProject'])
         ->name('scan');
     
     // Module routes
-    Route::post('/module', [ProjectManagementController::class, 'createModule'])
+    Route::post('/module', [ProjectManagementController::class, 'storeModule'])
         ->name('module.create');
-    Route::delete('/module/{module}', [ProjectManagementController::class, 'deleteModule'])
+    Route::delete('/module/{module}', [ProjectManagementController::class, 'destroyModule'])
         ->name('module.delete');
     
     // Endpoint routes
-    Route::put('/endpoint/{endpoint}/assign-module', [ProjectManagementController::class, 'assignModuleToEndpoint'])
+    Route::put('/endpoint/{endpoint}/assign-module', [ProjectManagementController::class, 'updateEndpoint'])
         ->name('endpoint.assign-module');
     
     // Task routes
-    Route::post('/task', [ProjectManagementController::class, 'createTask'])
+    Route::post('/task', [ProjectManagementController::class, 'storeTask'])
         ->name('task.create');
-    Route::delete('/task/{task}', [ProjectManagementController::class, 'deleteTask'])
+    Route::delete('/task/{task}', [ProjectManagementController::class, 'destroyTask'])
         ->name('task.delete');
     
     // Bug routes
-    Route::post('/bug', [ProjectManagementController::class, 'createBug'])
+    Route::post('/bug', [ProjectManagementController::class, 'storeBug'])
         ->name('bug.create');
-    Route::delete('/bug/{bug}', [ProjectManagementController::class, 'deleteBug'])
+    Route::delete('/bug/{bug}', [ProjectManagementController::class, 'destroyBug'])
         ->name('bug.delete');
     
     // Flow routes
-    Route::post('/flow', [ProjectManagementController::class, 'createFlow'])
+    Route::post('/flow', [ProjectManagementController::class, 'storeFlow'])
         ->name('flow.create');
-    Route::delete('/flow/{flow}', [ProjectManagementController::class, 'deleteFlow'])
+    Route::delete('/flow/{flow}', [ProjectManagementController::class, 'destroyFlow'])
         ->name('flow.delete');
 });

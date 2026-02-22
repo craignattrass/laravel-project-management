@@ -48,7 +48,7 @@ class ProjectManagementController extends Controller
 
         ProjectModule::create($validated);
 
-        return redirect()->route('master.project-management')->with('success', 'Module created successfully');
+        return redirect()->route('project-management.index')->with('success', 'Module created successfully')->withFragment('modules');
     }
 
     public function updateModule(Request $request, ProjectModule $module)
@@ -69,7 +69,7 @@ class ProjectManagementController extends Controller
     public function destroyModule(ProjectModule $module)
     {
         $module->delete();
-        return redirect()->route('master.project-management')->with('success', 'Module deleted successfully');
+        return redirect()->route('project-management.index')->with('success', 'Module deleted successfully')->withFragment('modules');
     }
 
     // Task CRUD
@@ -87,7 +87,7 @@ class ProjectManagementController extends Controller
 
         ProjectTask::create($validated);
 
-        return redirect()->route('master.project-management')->with('success', 'Task created successfully');
+        return redirect()->route('project-management.index')->with('success', 'Task created successfully')->withFragment('tasks');
     }
 
     public function updateTask(Request $request, ProjectTask $task)
@@ -117,7 +117,7 @@ class ProjectManagementController extends Controller
     public function destroyTask(ProjectTask $task)
     {
         $task->delete();
-        return redirect()->route('master.project-management')->with('success', 'Task deleted successfully');
+        return redirect()->route('project-management.index')->with('success', 'Task deleted successfully')->withFragment('tasks');
     }
 
     // Bug CRUD
@@ -140,7 +140,7 @@ class ProjectManagementController extends Controller
 
         ProjectBug::create($validated);
 
-        return redirect()->route('master.project-management')->with('success', 'Bug reported successfully');
+        return redirect()->route('project-management.index')->with('success', 'Bug reported successfully')->withFragment('bugs');
     }
 
     public function updateBug(Request $request, ProjectBug $bug)
@@ -175,7 +175,7 @@ class ProjectManagementController extends Controller
     public function destroyBug(ProjectBug $bug)
     {
         $bug->delete();
-        return redirect()->route('master.project-management')->with('success', 'Bug deleted successfully');
+        return redirect()->route('project-management.index')->with('success', 'Bug deleted successfully')->withFragment('bugs');
     }
 
     // Flow CRUD
@@ -192,7 +192,7 @@ class ProjectManagementController extends Controller
 
         ProjectFlow::create($validated);
 
-        return redirect()->route('master.project-management')->with('success', 'Flow diagram created successfully');
+        return redirect()->route('project-management.index')->with('success', 'Flow diagram created successfully')->withFragment('flows');
     }
 
     public function updateFlow(Request $request, ProjectFlow $flow)
@@ -215,7 +215,7 @@ class ProjectManagementController extends Controller
     public function destroyFlow(ProjectFlow $flow)
     {
         $flow->delete();
-        return redirect()->route('master.project-management')->with('success', 'Flow diagram deleted successfully');
+        return redirect()->route('project-management.index')->with('success', 'Flow diagram deleted successfully')->withFragment('flows');
     }
 
     // Endpoint CRUD
@@ -227,7 +227,7 @@ class ProjectManagementController extends Controller
 
         $endpoint->update($validated);
 
-        return redirect()->route('master.project-management')->with('success', 'Endpoint module updated successfully');
+        return redirect()->route('project-management.index')->with('success', 'Endpoint module updated successfully')->withFragment('endpoints');
     }
 
     // Scan Project
