@@ -46,7 +46,28 @@ This creates 6 tables:
 - `project_bugs`
 - `project_flows`
 
-### Step 3: Scan Your Project
+### Step 3: Configure Route Prefix (Optional)
+
+By default, the dashboard is accessible at `/project-management`.
+
+To use a different URL (like `/super-admin/project-management`), add to your `.env`:
+
+```env
+PROJECT_MANAGEMENT_ROUTE_PREFIX=super-admin/project-management
+```
+
+Or publish and edit the config file:
+
+```bash
+php artisan vendor:publish --tag=project-management-config
+```
+
+Then edit `config/project-management.php`:
+```php
+'route_prefix' => 'super-admin/project-management',
+```
+
+### Step 4: Scan Your Project
 
 ```bash
 php artisan project:scan
@@ -54,11 +75,13 @@ php artisan project:scan
 
 This will auto-populate your API endpoints and CLI commands.
 
-### Step 4: Access Dashboard
+### Step 5: Access Dashboard
 
-Visit: **`/project-management`** in your browser
+Visit the dashboard at the configured route prefix:
+- Default: **`/project-management`**
+- Custom: **`/your-custom-prefix`** (if you configured it in Step 3)
 
-### Step 5: Verify Styling (Important!)
+### Step 6: Verify Styling (Important!)
 
 **If you see plain text with no styling:**
 
@@ -281,8 +304,8 @@ Edit `config/project-management.php`:
 ```php
 return [
     // Route configuration
-    'route_prefix' => 'project-management',  // Change URL prefix
-    'middleware' => ['web', 'auth'],         // Customize middleware
+    'route_prefix' => 'project-management',     // Change URL prefix (supports nested: 'admin/projects')
+    'middleware' => ['web', 'auth'],            // Customize middleware
     
     // Layout configuration
     'layout' => 'layouts.app',               // Your layout file
@@ -300,10 +323,24 @@ return [
 
 ### Change Route Prefix
 
+You can nest the dashboard under any URL structure:
+
+**Via .env:**
+```env
+PROJECT_MANAGEMENT_ROUTE_PREFIX=super-admin/project-management
+```
+
+**Via config file:**
 ```php
 // config/project-management.php
-'route_prefix' => 'admin/projects',  // Access at /admin/projects
+'route_prefix' => 'super-admin/project-management',  // Access at /super-admin/project-management
 ```
+
+**Examples:**
+- `'admin/projects'` → `/admin/projects`
+- `'super-admin/project-management'` → `/super-admin/project-management`
+- `'dev/dashboard'` → `/dev/dashboard`
+- `'project-management'` → `/project-management` (default)
 
 ### Use Component Layout (Breeze/Jetstream)
 

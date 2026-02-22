@@ -8,11 +8,14 @@ use CraigNattrass\ProjectManagement\Http\Controllers\ProjectManagementController
 |--------------------------------------------------------------------------
 |
 | These routes are automatically loaded by the package service provider.
-| The routes use 'auth' middleware by default.
+| The route prefix and middleware are configurable in config/project-management.php
 |
 */
 
-Route::middleware(['web', 'auth'])->prefix('project-management')->name('project-management.')->group(function () {
+Route::middleware(config('project-management.middleware', ['web', 'auth']))
+    ->prefix(config('project-management.route_prefix', 'project-management'))
+    ->name('project-management.')
+    ->group(function () {
     // Main dashboard
     Route::get('/', [ProjectManagementController::class, 'index'])
         ->name('index');

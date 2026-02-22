@@ -8,8 +8,13 @@ return [
     |
     | Configure the route prefix and middleware for the dashboard
     |
+    | Examples:
+    |   'project-management' -> /project-management
+    |   'admin/projects' -> /admin/projects
+    |   'super-admin/project-management' -> /super-admin/project-management
+    |
     */
-    'route_prefix' => 'project-management',
+    'route_prefix' => env('PROJECT_MANAGEMENT_ROUTE_PREFIX', 'project-management'),
     
     'middleware' => ['web', 'auth'],
     
