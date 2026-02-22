@@ -480,7 +480,6 @@ MIT License - free to use in your projects.
 ## Support
 
 - GitHub: https://github.com/craignattrass/laravel-project-management
-- Email: craig@backuplogs.co.za
 
 ---
 
