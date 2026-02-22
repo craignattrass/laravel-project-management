@@ -1,10 +1,11 @@
 @php
-    // Try to detect if app-layout component exists, otherwise use simple layout
-    $hasAppLayout = view()->exists('components.app-layout') || view()->exists('layouts.app');
+    $layout = config('project-management.layout');
+    $layoutType = config('project-management.layout_type');
 @endphp
 
-@if($hasAppLayout && view()->exists('components.app-layout'))
-    <x-app-layout>
+@if($layoutType === 'component' && $layout)
+    {{-- Component-based layout (e.g., Breeze/Jetstream) --}}
+    <x-dynamic-component :component="$layout">
         <x-slot name="header">
             <div class="flex justify-between items-center">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -26,7 +27,13 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+@elseif($layoutType === 'extends' && $layout)
+    {{-- Traditional Blade layout with @extends --}}
+    @extends($layout)
+
+    @section('content')
 @else
+    {{-- Standalone layout (no parent) --}}
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -64,6 +71,7 @@
 
 <div class="px-4 py-6">
     <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Project Intelligence Dashboard</h1>
         <p class="text-gray-600 mt-1">Track modules, APIs, CLI commands, tasks, bugs, and document flows</p>
     </div>
 
@@ -241,11 +249,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </div>
 
-@if($hasAppLayout && view()->exists('components.app-layout'))
+@if($layoutType === 'component' && $layout)
+    {{-- Close component layout --}}
             </div>
         </div>
-    </x-app-layout>
+    </x-dynamic-component>
+@elseif($layoutType === 'extends' && $layout)
+    {{-- Close @extends layout --}}
+    @endsection
 @else
+    {{-- Close standalone layout --}}
                 </div>
             </div>
         </div>

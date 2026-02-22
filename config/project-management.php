@@ -15,6 +15,24 @@ return [
     
     /*
     |--------------------------------------------------------------------------
+    | Layout Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure which layout the dashboard should use
+    |
+    | layout: The view path to your layout (e.g., 'layouts.app')
+    | layout_type: 'extends' or 'component'
+    |   - 'extends': Uses @extends() for traditional Blade layouts
+    |   - 'component': Uses <x-{name}> for component-based layouts
+    |   - null: Renders standalone (no parent layout)
+    |
+    */
+    'layout' => env('PROJECT_MANAGEMENT_LAYOUT', 'layouts.app'),
+    
+    'layout_type' => env('PROJECT_MANAGEMENT_LAYOUT_TYPE', 'extends'),
+    
+    /*
+    |--------------------------------------------------------------------------
     | Auto-scan Configuration
     |--------------------------------------------------------------------------
     |

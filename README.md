@@ -60,27 +60,77 @@ Visit: **`/project-management`** in your browser
 
 That's it! 🎉
 
-## Layout Compatibility
+## Layout Configuration
 
-This package automatically adapts to your application's layout structure:
+The package is **layout-agnostic** and works with any Laravel application structure.
 
-### ✅ Works With Component-Based Layouts (Breeze, Jetstream)
+### Default Configuration
 
-If your app uses `<x-app-layout>` components (Laravel Breeze, Jetstream), the dashboard will automatically integrate with your existing layout, header, and navigation.
-
-### ✅ Works Without Any Layout
-
-If your app doesn't have `<x-app-layout>`, the dashboard renders with a standalone layout using Tailwind CSS from CDN. It works out-of-the-box without any configuration!
+By default, the package uses `@extends('layouts.app')` which works with most Laravel applications.
 
 ### Customize the Layout
 
-If you want to customize how the dashboard integrates with your app:
+Edit your `.env` file:
 
-```bash
-php artisan vendor:publish --tag=project-management-views
+```env
+# Use a different layout file
+PROJECT_MANAGEMENT_LAYOUT=layouts.master
+
+# Or use component-based layout (Breeze/Jetstream)
+PROJECT_MANAGEMENT_LAYOUT=app-layout
+PROJECT_MANAGEMENT_LAYOUT_TYPE=component
+
+# Or disable layout integration (standalone)
+PROJECT_MANAGEMENT_LAYOUT=null
+PROJECT_MANAGEMENT_LAYOUT_TYPE=null
 ```
 
-Then edit `resources/views/vendor/project-management/project-management/index.blade.php` to match your app's layout structure.
+Or publish and edit the config file:
+
+```bash
+php artisan vendor:publish --tag=project-management-config
+```
+
+Then edit `config/project-management.php`:
+
+```php
+return [
+    // Traditional Blade layout with @extends (default)
+    'layout' => 'layouts.app',
+    'layout_type' => 'extends',
+    
+    // OR component-based layout (Breeze/Jetstream)
+    // 'layout' => 'app-layout',
+    // 'layout_type' => 'component',
+    
+    // OR standalone (no parent layout)
+    // 'layout' => null,
+    // 'layout_type' => null,
+];
+```
+
+### Layout Types
+
+**`extends` (Default)** - Traditional Blade layout
+```php
+'layout' => 'layouts.app',
+'layout_type' => 'extends',
+```
+Uses `@extends('layouts.app')` - works with standard Laravel layouts
+
+**`component`** - Component-based layout
+```php
+'layout' => 'app-layout',
+'layout_type' => 'component',
+```
+Uses `<x-app-layout>` - works with Breeze, Jetstream, or custom components
+
+**`null`** - Standalone
+```php
+'layout' => null,
+'layout_type' => null,
+```
+Renders with its own HTML structure and Tailwind CDN
 
 ## Optional: Publish Assets
 
@@ -151,8 +201,15 @@ Edit `config/project-management.php`:
 
 ```php
 return [
+    // Route configuration
     'route_prefix' => 'project-management',  // Change URL prefix
-    'middleware' => ['web', 'auth'],        // Customize middleware
+    'middleware' => ['web', 'auth'],         // Customize middleware
+    
+    // Layout configuration
+    'layout' => 'layouts.app',               // Your layout file
+    'layout_type' => 'extends',              // 'extends', 'component', or null
+    
+    // Auto-scan configuration
     'auto_scan' => [
         'enabled' => true,
         'exclude_routes' => ['_debugbar', '_ignition'],
@@ -167,6 +224,14 @@ return [
 ```php
 // config/project-management.php
 'route_prefix' => 'admin/projects',  // Access at /admin/projects
+```
+
+### Use Component Layout (Breeze/Jetstream)
+
+```php
+// config/project-management.php
+'layout' => 'app-layout',
+'layout_type' => 'component',
 ```
 
 ### Add Additional Middleware
