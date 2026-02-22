@@ -60,6 +60,28 @@ Visit: **`/project-management`** in your browser
 
 That's it! 🎉
 
+## Layout Compatibility
+
+This package automatically adapts to your application's layout structure:
+
+### ✅ Works With Component-Based Layouts (Breeze, Jetstream)
+
+If your app uses `<x-app-layout>` components (Laravel Breeze, Jetstream), the dashboard will automatically integrate with your existing layout, header, and navigation.
+
+### ✅ Works Without Any Layout
+
+If your app doesn't have `<x-app-layout>`, the dashboard renders with a standalone layout using Tailwind CSS from CDN. It works out-of-the-box without any configuration!
+
+### Customize the Layout
+
+If you want to customize how the dashboard integrates with your app:
+
+```bash
+php artisan vendor:publish --tag=project-management-views
+```
+
+Then edit `resources/views/vendor/project-management/project-management/index.blade.php` to match your app's layout structure.
+
 ## Optional: Publish Assets
 
 If you want to customize views or config:

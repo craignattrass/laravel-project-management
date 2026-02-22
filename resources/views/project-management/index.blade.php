@@ -1,35 +1,70 @@
-@extends('layouts.app')
+@php
+    // Try to detect if app-layout component exists, otherwise use simple layout
+    $hasAppLayout = view()->exists('components.app-layout') || view()->exists('layouts.app');
+@endphp
 
-@section('title', 'Project Management')
-@section('nav-title', 'Project Management')
+@if($hasAppLayout && view()->exists('components.app-layout'))
+    <x-app-layout>
+        <x-slot name="header">
+            <div class="flex justify-between items-center">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    {{ __('Project Intelligence Dashboard') }}
+                </h2>
+                <div class="flex gap-3">
+                    <form method="POST" action="{{ route('project-management.scan') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 inline-flex items-center gap-2 text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Scan Project
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </x-slot>
 
-@section('nav-actions')
-    <a href="{{ route('dashboard') }}" class="mr-2" title="Dashboard">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 hover:text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-    </a>
-@endsection
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+@else
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Project Intelligence Dashboard</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-100">
+        <div class="min-h-screen">
+            <nav class="bg-white border-b border-gray-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between h-16">
+                        <div class="flex items-center">
+                            <h1 class="text-xl font-semibold text-gray-900">Project Management</h1>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <form method="POST" action="{{ route('project-management.scan') }}" class="inline">
+                                @csrf
+                                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 inline-flex items-center gap-2 text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                    Scan Project
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </nav>
 
-@section('content')
+            <div class="py-6">
+                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+@endif
+
 <div class="px-4 py-6">
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Project Intelligence Dashboard</h1>
-            <p class="text-gray-600 mt-1">Track modules, APIs, CLI commands, tasks, bugs, and document flows</p>
-        </div>
-        <div class="flex gap-3">
-            <form method="POST" action="{{ route('project-management.scan') }}" class="inline">
-                @csrf
-                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 inline-flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Scan Project
-                </button>
-            </form>
-            <a href="{{ route('dashboard') }}" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">Back to Dashboard</a>
-        </div>
+    <div class="mb-6">
+        <p class="text-gray-600 mt-1">Track modules, APIs, CLI commands, tasks, bugs, and document flows</p>
     </div>
 
     @if(session('scan_output'))
@@ -203,4 +238,17 @@ document.addEventListener('DOMContentLoaded', function() {
     @apply border-purple-600 text-purple-600;
 }
 </style>
-@endsection
+
+</div>
+
+@if($hasAppLayout && view()->exists('components.app-layout'))
+            </div>
+        </div>
+    </x-app-layout>
+@else
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+@endif
