@@ -19,8 +19,8 @@ A comprehensive Project Intelligence Dashboard for Laravel applications with aut
 ## Requirements
 
 - PHP ^8.1
-- Laravel ^10.0 or ^11.0
-- Tailwind CSS (for styling)
+- Laravel ^10.0 or ^11.0 or ^12.0
+- Tailwind CSS (optional - use `standalone` mode if you don't have it)
 
 ## Installation
 
@@ -58,6 +58,35 @@ This will auto-populate your API endpoints and CLI commands.
 
 Visit: **`/project-management`** in your browser
 
+### Step 5: Verify Styling (Important!)
+
+**If you see plain text with no styling:**
+
+Your app needs Tailwind CSS. Choose one of these options:
+
+**Option A: Use Standalone Mode (Easiest - No Tailwind Required)**
+
+Add to your `.env`:
+```env
+PROJECT_MANAGEMENT_LAYOUT_TYPE=standalone
+```
+
+This uses a self-contained layout with Tailwind CDN. Perfect for apps without Tailwind.
+
+**Option B: Install Tailwind CSS**
+
+If your app doesn't have Tailwind:
+```bash
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+npm run build
+```
+
+Then ensure your `resources/views/layouts/app.blade.php` includes:
+```html
+@vite(['resources/css/app.css', 'resources/js/app.js'])
+```
+
 That's it! 🎉
 
 ## Layout Configuration
@@ -66,7 +95,7 @@ The package is **layout-agnostic** and works with any Laravel application struct
 
 ### Default Configuration
 
-By default, the package uses `@extends('layouts.app')` which works with most Laravel applications.
+By default, the package uses `@extends('layouts.app')` which works with most Laravel applications **that have Tailwind CSS installed**.
 
 ### Customize the Layout
 
@@ -289,9 +318,35 @@ php artisan config:clear
 php artisan view:clear
 ```
 
-**Issue: Styling missing**
-- Ensure Tailwind CSS is installed and compiled
-- Run `npm run build`
+**Issue: No styling / Plain text dashboard**
+
+This happens when your app doesn't have Tailwind CSS installed or compiled.
+
+**Quick Fix (Recommended):** Use standalone mode
+```env
+# Add to .env
+PROJECT_MANAGEMENT_LAYOUT_TYPE=standalone
+```
+This uses a self-contained layout with Tailwind CDN - no installation needed!
+
+**Alternative:** Install Tailwind CSS in your app
+```bash
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+npm run build
+```
+
+Then verify your `resources/views/layouts/app.blade.php` has:
+```html
+@vite(['resources/css/app.css', 'resources/js/app.js'])
+```
+
+**Issue: Buttons not showing in header**
+
+Your app's `layouts.app` might not have proper sections. Use standalone mode:
+```env
+PROJECT_MANAGEMENT_LAYOUT_TYPE=standalone
+```
 
 ## License
 
