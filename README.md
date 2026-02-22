@@ -79,15 +79,65 @@ If your app doesn't have Tailwind:
 ```bash
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
+```
+
+**IMPORTANT:** Add the package views to your `tailwind.config.js`:
+```javascript
+export default {
+  content: [
+    './resources/**/*.blade.php',
+    './resources/**/*.js',
+    './vendor/craignattrass/laravel-project-management/resources/views/**/*.blade.php', // Add this line
+  ],
+  // ... rest of config
+}
+```
+
+Then build your assets:
+```bash
 npm run build
 ```
 
-Then ensure your `resources/views/layouts/app.blade.php` includes:
+And ensure your `resources/views/layouts/app.blade.php` includes:
 ```html
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 ```
 
+**If your app already has Tailwind:** Just add the package path to `tailwind.config.js` and rebuild:
+```bash
+npm run build
+```
+
 That's it! 🎉
+
+## Using with Tailwind CSS
+
+**Important:** If you're using `extends` or `component` layout mode (default), you **must** add the package views to your Tailwind configuration so it can scan and compile the utility classes.
+
+Edit your `tailwind.config.js`:
+
+```javascript
+export default {
+  content: [
+    './resources/**/*.blade.php',
+    './resources/**/*.js',
+    './vendor/craignattrass/laravel-project-management/resources/views/**/*.blade.php', // Add this
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+Then rebuild your assets:
+```bash
+npm run build
+```
+
+**Why is this needed?** Tailwind only includes CSS for classes it finds during the build process. Without adding the package path, Tailwind won't scan the package views, and all the styling (flex, grid, colors, etc.) will be missing.
+
+**Don't want to configure Tailwind?** Use standalone mode instead (see Step 5 above).
 
 ## Layout Configuration
 
@@ -320,19 +370,32 @@ php artisan view:clear
 
 **Issue: No styling / Plain text dashboard**
 
-This happens when your app doesn't have Tailwind CSS installed or compiled.
+This happens when your app doesn't have Tailwind CSS configured properly.
 
-**Quick Fix (Recommended):** Use standalone mode
+**Most Common Cause:** Package views not in `tailwind.config.js`
+
+Add this to your `tailwind.config.js` content array:
+```javascript
+'./vendor/craignattrass/laravel-project-management/resources/views/**/*.blade.php'
+```
+
+Then rebuild:
+```bash
+npm run build
+```
+
+**Quick Fix (Alternative):** Use standalone mode
 ```env
 # Add to .env
 PROJECT_MANAGEMENT_LAYOUT_TYPE=standalone
 ```
-This uses a self-contained layout with Tailwind CDN - no installation needed!
+This uses a self-contained layout with Tailwind CDN - no configuration needed!
 
-**Alternative:** Install Tailwind CSS in your app
+**If Tailwind not installed:** Install it
 ```bash
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
+# Add package path to tailwind.config.js content array
 npm run build
 ```
 
