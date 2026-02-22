@@ -1,0 +1,43 @@
+{
+    "name": "craignattrass/laravel-project-management",
+    "description": "A comprehensive Project Intelligence Dashboard for Laravel applications with auto-scanning, task tracking, and AI context awareness",
+    "keywords": [
+        "laravel",
+        "project-management",
+        "dashboard",
+        "api-registry",
+        "task-tracker",
+        "bug-tracker",
+        "documentation",
+        "github-copilot"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Craig Nattrass",
+            "email": "craig@backuplogs.co.za"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^10.0|^11.0",
+        "illuminate/console": "^10.0|^11.0",
+        "illuminate/database": "^10.0|^11.0",
+        "illuminate/routing": "^10.0|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "CraigNattrass\\ProjectManagement\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CraigNattrass\\ProjectManagement\\ProjectManagementServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
