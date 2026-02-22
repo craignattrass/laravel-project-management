@@ -20,7 +20,7 @@ A comprehensive Project Intelligence Dashboard for Laravel applications with aut
 
 - PHP ^8.1
 - Laravel ^10.0 or ^11.0 or ^12.0
-- Tailwind CSS (optional - use `standalone` mode if you don't have it)
+- **Tailwind CSS (Highly Recommended)** - For optimal performance and styling. Standalone mode is available but provides a degraded experience.
 
 ## Installation
 
@@ -85,20 +85,17 @@ Visit the dashboard at the configured route prefix:
 
 **If you see plain text with no styling:**
 
-Your app needs Tailwind CSS. Choose one of these options:
+Your app needs Tailwind CSS configured properly.
 
-**Option A: Use Standalone Mode (Easiest - No Tailwind Required)**
+**⚠️ RECOMMENDED: Install Tailwind CSS (Best Performance)**
 
-Add to your `.env`:
-```env
-PROJECT_MANAGEMENT_LAYOUT_TYPE=standalone
-```
+Tailwind CSS is **strongly recommended** for:
+✅ Faster page loads (compiled CSS is much smaller than CDN)
+✅ Better user experience (no flash of unstyled content)
+✅ Consistent styling with your application
+✅ Production-ready performance
 
-This uses a self-contained layout with Tailwind CDN. Perfect for apps without Tailwind.
-
-**Option B: Install Tailwind CSS**
-
-If your app doesn't have Tailwind:
+**If your app doesn't have Tailwind, install it now:**
 ```bash
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
@@ -131,11 +128,32 @@ And ensure your `resources/views/layouts/app.blade.php` includes:
 npm run build
 ```
 
-That's it! 🎉
+**🎉 Done!** Your dashboard will now have optimal performance.
 
-## Using with Tailwind CSS
+---
 
-**Important:** If you're using `extends` or `component` layout mode (default), you **must** add the package views to your Tailwind configuration so it can scan and compile the utility classes.
+**Option B: Standalone Mode (Fallback Only)**
+
+⚠️ **Only use this if you cannot install Tailwind CSS.**
+
+Add to your `.env`:
+```env
+PROJECT_MANAGEMENT_LAYOUT_TYPE=standalone
+```
+
+**Note:** Standalone mode uses Tailwind CDN which:
+- ❌ Loads a large CSS file (~3MB) on every page load
+- ❌ May cause flash of unstyled content (FOUC)
+- ❌ Not recommended for production
+- ✅ Works as a quick test/demo option
+
+**💡 You should install Tailwind CSS instead for production use.**
+
+## Using with Tailwind CSS (Recommended Setup)
+
+**✅ This is the recommended approach for all production applications.**
+
+If you're using `extends` or `component` layout mode (default), you **must** add the package views to your Tailwind configuration so it can scan and compile the utility classes.
 
 Edit your `tailwind.config.js`:
 
@@ -160,7 +178,11 @@ npm run build
 
 **Why is this needed?** Tailwind only includes CSS for classes it finds during the build process. Without adding the package path, Tailwind won't scan the package views, and all the styling (flex, grid, colors, etc.) will be missing.
 
-**Don't want to configure Tailwind?** Use standalone mode instead (see Step 5 above).
+**Performance Benefits:**
+- ⚡ Compiled CSS is typically 10-50KB vs 3MB+ with CDN
+- 🚀 No flash of unstyled content (FOUC)
+- 🎯 Only includes classes you actually use
+- 🔒 Production-ready and cacheable
 
 ## Layout Configuration
 
@@ -182,9 +204,8 @@ PROJECT_MANAGEMENT_LAYOUT=layouts.master
 PROJECT_MANAGEMENT_LAYOUT=app-layout
 PROJECT_MANAGEMENT_LAYOUT_TYPE=component
 
-# Or disable layout integration (standalone)
-PROJECT_MANAGEMENT_LAYOUT=null
-PROJECT_MANAGEMENT_LAYOUT_TYPE=null
+# Or standalone mode (not recommended - for testing only)
+PROJECT_MANAGEMENT_LAYOUT_TYPE=standalone
 ```
 
 Or publish and edit the config file:
@@ -227,12 +248,12 @@ Uses `@extends('layouts.app')` - works with standard Laravel layouts
 ```
 Uses `<x-app-layout>` - works with Breeze, Jetstream, or custom components
 
-**`null`** - Standalone
+**`standalone`** - Standalone (Not Recommended)
 ```php
 'layout' => null,
-'layout_type' => null,
+'layout_type' => 'standalone',
 ```
-Renders with its own HTML structure and Tailwind CDN
+Renders with its own HTML structure and Tailwind CDN. Only use for testing/demos, not production.
 
 ## Optional: Publish Assets
 
@@ -409,6 +430,8 @@ php artisan view:clear
 
 This happens when your app doesn't have Tailwind CSS configured properly.
 
+**✅ RECOMMENDED FIX: Install/Configure Tailwind CSS**
+
 **Most Common Cause:** Package views not in `tailwind.config.js`
 
 Add this to your `tailwind.config.js` content array:
@@ -421,14 +444,7 @@ Then rebuild:
 npm run build
 ```
 
-**Quick Fix (Alternative):** Use standalone mode
-```env
-# Add to .env
-PROJECT_MANAGEMENT_LAYOUT_TYPE=standalone
-```
-This uses a self-contained layout with Tailwind CDN - no configuration needed!
-
-**If Tailwind not installed:** Install it
+**If Tailwind not installed:** Install it now (strongly recommended)
 ```bash
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
@@ -440,6 +456,15 @@ Then verify your `resources/views/layouts/app.blade.php` has:
 ```html
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 ```
+
+**⚠️ Last Resort: Standalone Mode (Not Recommended for Production)**
+
+Only if you absolutely cannot install Tailwind:
+```env
+# Add to .env
+PROJECT_MANAGEMENT_LAYOUT_TYPE=standalone
+```
+Note: Uses 3MB+ Tailwind CDN, not recommended for production.
 
 **Issue: Buttons not showing in header**
 
