@@ -244,10 +244,6 @@ window.openEditTaskModal = function(taskId) {
     const task = taskData.find(t => t.id === taskId);
     if (!task) return;
     
-    console.log('Task data:', task);
-    console.log('Due date value:', task.due_date);
-    console.log('Due date type:', typeof task.due_date);
-    
     document.getElementById('edit_task_title').value = task.title || '';
     document.getElementById('edit_task_description').value = task.description || '';
     document.getElementById('edit_task_status').value = task.status || 'pending';
@@ -255,8 +251,12 @@ window.openEditTaskModal = function(taskId) {
     document.getElementById('edit_task_type').value = task.type || 'feature';
     document.getElementById('edit_task_module_id').value = task.module_id || '';
     
-    // Due date is now always a simple string in YYYY-MM-DD format from the controller
-    document.getElementById('edit_task_due_date').value = task.due_date || '';
+    // Extract YYYY-MM-DD from ISO date string (e.g., "2026-02-24T00:00:00.000000Z")
+    if (task.due_date) {
+        document.getElementById('edit_task_due_date').value = task.due_date.split('T')[0];
+    } else {
+        document.getElementById('edit_task_due_date').value = '';
+    }
     
     document.getElementById('edit_task_notes').value = task.notes || '';
     
