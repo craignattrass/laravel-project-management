@@ -37,18 +37,28 @@ Route::middleware(config('project-management.middleware', ['web', 'auth']))
     // Task routes
     Route::post('/task', [ProjectManagementController::class, 'storeTask'])
         ->name('task.create');
+    Route::put('/task/{task}', [ProjectManagementController::class, 'updateTask'])
+        ->name('task.update');
+    Route::patch('/task/{task}/toggle-status', [ProjectManagementController::class, 'toggleTaskStatus'])
+        ->name('task.toggle-status');
     Route::delete('/task/{task}', [ProjectManagementController::class, 'destroyTask'])
         ->name('task.delete');
     
     // Bug routes
     Route::post('/bug', [ProjectManagementController::class, 'storeBug'])
         ->name('bug.create');
+    Route::put('/bug/{bug}', [ProjectManagementController::class, 'updateBug'])
+        ->name('bug.update');
+    Route::patch('/bug/{bug}/toggle-status', [ProjectManagementController::class, 'toggleBugStatus'])
+        ->name('bug.toggle-status');
     Route::delete('/bug/{bug}', [ProjectManagementController::class, 'destroyBug'])
         ->name('bug.delete');
     
     // Flow routes
     Route::post('/flow', [ProjectManagementController::class, 'storeFlow'])
         ->name('flow.create');
+    Route::put('/flow/{flow}', [ProjectManagementController::class, 'updateFlow'])
+        ->name('flow.update');
     Route::delete('/flow/{flow}', [ProjectManagementController::class, 'destroyFlow'])
         ->name('flow.delete');
 });

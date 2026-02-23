@@ -120,6 +120,29 @@ class ProjectManagementController extends Controller
         return redirect()->route('project-management.index')->with('success', 'Task deleted successfully')->withFragment('tasks');
     }
 
+    public function toggleTaskStatus(Request $request, ProjectTask $task)
+    {
+        $currentStatus = $task->status;
+        
+        // Status progression: pending -> in_progress -> completed
+        $newStatus = match($currentStatus) {
+            'pending' => 'in_progress',
+            'in_progress' => 'completed',
+            'completed' => 'pending',
+            'blocked' => 'in_progress',
+            default => 'pending',
+        };
+        
+        $task->update([
+            'status' => $newStatus,
+            'completed_at' => $newStatus === 'completed' ? now() : null,
+        ]);
+        
+        return redirect()->route('project-management.index')
+            ->with('success', 'Task status updated to: ' . ucwords(str_replace('_', ' ', $newStatus)))
+            ->withFragment('tasks');
+    }
+
     // Bug CRUD
     public function storeBug(Request $request)
     {
@@ -176,6 +199,30 @@ class ProjectManagementController extends Controller
     {
         $bug->delete();
         return redirect()->route('project-management.index')->with('success', 'Bug deleted successfully')->withFragment('bugs');
+    }
+
+    public function toggleBugStatus(Request $request, ProjectBug $bug)
+    {
+        $currentStatus = $bug->status;
+        
+        // Status progression: open -> investigating -> in_progress -> resolved
+        $newStatus = match($currentStatus) {
+            'open' => 'investigating',
+            'investigating' => 'in_progress',
+            'in_progress' => 'resolved',
+            'resolved' => 'open',
+            'wont_fix' => 'open',
+            default => 'open',
+        };
+        
+        $bug->update([
+            'status' => $newStatus,
+            'resolved_at' => $newStatus === 'resolved' ? now() : null,
+        ]);
+        
+        return redirect()->route('project-management.index')
+            ->with('success', 'Bug status updated to: ' . ucwords(str_replace('_', ' ', $newStatus)))
+            ->withFragment('bugs');
     }
 
     // Flow CRUD

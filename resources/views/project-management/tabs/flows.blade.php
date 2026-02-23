@@ -24,11 +24,14 @@
                             @endif
                         </div>
                     </div>
-                    <button class="text-red-600 hover:text-red-900 text-sm" onclick="if(confirm('Delete flow diagram?')) document.getElementById('delete-flow-{{$flow->id}}').submit()">Delete</button>
-                    <form id="delete-flow-{{$flow->id}}" method="POST" action="{{ route('project-management.flow.delete', $flow) }}" class="hidden">
-                        @csrf
-                        @method('DELETE')
-                    </form>
+                    <div class="flex gap-2">
+                        <button onclick="openEditFlowModal({{ $flow->id }})" class="px-3 py-1 bg-blue-100 text-blue-600 hover:bg-blue-200 text-sm rounded">Edit</button>
+                        <button class="text-red-600 hover:text-red-900 text-sm" onclick="if(confirm('Delete flow diagram?')) document.getElementById('delete-flow-{{$flow->id}}').submit()">Delete</button>
+                        <form id="delete-flow-{{$flow->id}}" method="POST" action="{{ route('project-management.flow.delete', $flow) }}" class="hidden">
+                            @csrf
+                            @method('DELETE')
+                        </form>
+                    </div>
                 </div>
                 
                 <!-- Mermaid Diagram -->
@@ -119,6 +122,61 @@
     </div>
 </div>
 
+<!-- Edit Flow Modal -->
+<div id="editFlowModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
+        <h3 class="text-lg font-semibold mb-4">Edit Flow Diagram</h3>
+        <form id="editFlowForm" method="POST" action="">
+            @csrf
+            @method('PUT')
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                    <input type="text" name="name" id="edit_flow_name" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Slug *</label>
+                    <input type="text" name="slug" id="edit_flow_slug" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name="description" id="edit_flow_description" rows="2" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Type *</label>
+                        <select name="type" id="edit_flow_type" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500">
+                            <option value="flowchart">Flowchart</option>
+                            <option value="sequence">Sequence</option>
+                            <option value="class">Class</option>
+                            <option value="state">State</option>
+                            <option value="gantt">Gantt</option>
+                            <option value="pie">Pie</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Module</label>
+                        <select name="module_id" id="edit_flow_module_id" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500">
+                            <option value="">None</option>
+                            @foreach($modules as $module)
+                                <option value="{{ $module->id }}">{{ $module->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mermaid Diagram Code *</label>
+                    <textarea name="mermaid_diagram" id="edit_flow_diagram" rows="10" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500 font-mono text-sm"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeModal('editFlowModal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Update Flow</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Mermaid.js CDN -->
 <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
@@ -127,4 +185,23 @@
         theme: 'default',
         securityLevel: 'loose'
     });
+</script>
+
+<script>
+const flowData = @json($flows);
+
+function openEditFlowModal(flowId) {
+    const flow = flowData.find(f => f.id === flowId);
+    if (!flow) return;
+    
+    document.getElementById('edit_flow_name').value = flow.name || '';
+    document.getElementById('edit_flow_slug').value = flow.slug || '';
+    document.getElementById('edit_flow_description').value = flow.description || '';
+    document.getElementById('edit_flow_type').value = flow.type || 'flowchart';
+    document.getElementById('edit_flow_module_id').value = flow.module_id || '';
+    document.getElementById('edit_flow_diagram').value = flow.mermaid_diagram || '';
+    
+    document.getElementById('editFlowForm').action = `/project-management/flow/${flowId}`;
+    openModal('editFlowModal');
+}
 </script>

@@ -48,8 +48,29 @@
                         @if($task->due_date)
                             <p class="text-xs text-gray-500 mt-2">Due: {{ $task->due_date->format('Y-m-d') }}</p>
                         @endif
+                        @if($task->notes)
+                            <div class="mt-3 p-2 bg-yellow-50 border-l-4 border-yellow-400 rounded text-sm">
+                                <strong class="text-yellow-800">Notes:</strong>
+                                <p class="text-gray-700 text-xs mt-1">{{ $task->notes }}</p>
+                            </div>
+                        @endif
                     </div>
-                    <div>
+                    <div class="flex gap-2">
+                        <form method="POST" action="{{ route('project-management.task.toggle-status', $task) }}" class="inline">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="px-3 py-1 text-sm rounded
+                                @if($task->status === 'completed') bg-gray-100 text-gray-600 hover:bg-gray-200
+                                @elseif($task->status === 'in_progress') bg-blue-100 text-blue-600 hover:bg-blue-200
+                                @else bg-green-100 text-green-600 hover:bg-green-200
+                                @endif" title="Click to change status">
+                                @if($task->status === 'completed') Reopen
+                                @elseif($task->status === 'in_progress') Complete
+                                @else Start
+                                @endif
+                            </button>
+                        </form>
+                        <button onclick="openEditTaskModal({{ $task->id }})" class="px-3 py-1 bg-blue-100 text-blue-600 hover:bg-blue-200 text-sm rounded">Edit</button>
                         <button class="text-red-600 hover:text-red-900 text-sm" onclick="if(confirm('Delete task?')) document.getElementById('delete-task-{{$task->id}}').submit()">Delete</button>
                         <form id="delete-task-{{$task->id}}" method="POST" action="{{ route('project-management.task.delete', $task) }}" class="hidden">
                             @csrf
@@ -132,7 +153,99 @@
     </div>
 </div>
 
+<!-- Edit Task Modal -->
+<div id="editTaskModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+        <h3 class="text-lg font-semibold mb-4">Edit Task</h3>
+        <form id="editTaskForm" method="POST" action="">
+            @csrf
+            @method('PUT')
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+                    <input type="text" name="title" id="edit_task_title" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name="description" id="edit_task_description" rows="3" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Status *</label>
+                        <select name="status" id="edit_task_status" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500">
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="blocked">Blocked</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Priority *</label>
+                        <select name="priority" id="edit_task_priority" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Type *</label>
+                        <select name="type" id="edit_task_type" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500">
+                            <option value="feature">Feature</option>
+                            <option value="enhancement">Enhancement</option>
+                            <option value="refactor">Refactor</option>
+                            <option value="documentation">Documentation</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Module</label>
+                        <select name="module_id" id="edit_task_module_id" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500">
+                            <option value="">None</option>
+                            @foreach($modules as $module)
+                                <option value="{{ $module->id }}">{{ $module->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                    <input type="date" name="due_date" id="edit_task_due_date" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                    <textarea name="notes" id="edit_task_notes" rows="3" placeholder="Add internal notes or comments..." class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeModal('editTaskModal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Update Task</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+const taskData = @json($tasks);
+
+function openEditTaskModal(taskId) {
+    const task = taskData.find(t => t.id === taskId);
+    if (!task) return;
+    
+    document.getElementById('edit_task_title').value = task.title || '';
+    document.getElementById('edit_task_description').value = task.description || '';
+    document.getElementById('edit_task_status').value = task.status || 'pending';
+    document.getElementById('edit_task_priority').value = task.priority || 'medium';
+    document.getElementById('edit_task_type').value = task.type || 'feature';
+    document.getElementById('edit_task_module_id').value = task.module_id || '';
+    document.getElementById('edit_task_due_date').value = task.due_date || '';
+    document.getElementById('edit_task_notes').value = task.notes || '';
+    
+    document.getElementById('editTaskForm').action = `/project-management/task/${taskId}`;
+    openModal('editTaskModal');
+}
+
 function filterTasks(status) {
     document.querySelectorAll('.task-filter-btn').forEach(btn => {
         btn.classList.remove('bg-purple-100', 'text-purple-700', 'font-semibold');
