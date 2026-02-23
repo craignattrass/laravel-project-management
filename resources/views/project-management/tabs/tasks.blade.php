@@ -253,8 +253,14 @@ window.openEditTaskModal = function(taskId) {
     
     // Format the due_date properly for date input (YYYY-MM-DD)
     if (task.due_date) {
-        const date = new Date(task.due_date);
-        const formattedDate = date.toISOString().split('T')[0];
+        // Handle both string dates and date objects
+        let formattedDate = task.due_date;
+        if (typeof formattedDate === 'string') {
+            // If it's already a string, extract just YYYY-MM-DD part
+            formattedDate = formattedDate.split('T')[0].split(' ')[0];
+        } else if (formattedDate instanceof Date) {
+            formattedDate = formattedDate.toISOString().split('T')[0];
+        }
         document.getElementById('edit_task_due_date').value = formattedDate;
     } else {
         document.getElementById('edit_task_due_date').value = '';
