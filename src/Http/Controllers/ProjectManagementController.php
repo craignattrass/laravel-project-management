@@ -18,8 +18,20 @@ class ProjectManagementController extends Controller
         $modules = ProjectModule::withCount(['endpoints', 'cliCommands', 'tasks', 'bugs', 'flows'])->orderBy('order')->get();
         $endpoints = ProjectEndpoint::with('module')->orderBy('method')->orderBy('uri')->get();
         $cliCommands = ProjectCliCommand::with('module')->orderBy('name')->get();
-        $tasks = ProjectTask::with('module')->orderBy('order')->get();
-        $bugs = ProjectBug::with('module')->orderBy('severity', 'desc')->orderBy('created_at', 'desc')->get();
+        $tasks = ProjectTask::with('module')->orderBy('order')->get()->map(function($task) {
+            // Ensure due_date is formatted as a simple string for JavaScript
+            if ($task->due_date) {
+                $task->due_date = $task->due_date->format('Y-m-d');
+            }
+            return $task;
+        });
+        $bugs = ProjectBug::with('module')->orderBy('severity', 'desc')->orderBy('created_at', 'desc')->get()->map(function($bug) {
+            // Ensure found_at is formatted as a simple string for JavaScript
+            if ($bug->found_at) {
+                $bug->found_at = $bug->found_at->format('Y-m-d');
+            }
+            return $bug;
+        });
         $flows = ProjectFlow::with('module')->where('is_active', true)->orderBy('order')->get();
 
         $stats = [

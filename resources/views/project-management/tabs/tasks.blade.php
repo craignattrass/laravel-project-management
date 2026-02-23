@@ -244,6 +244,10 @@ window.openEditTaskModal = function(taskId) {
     const task = taskData.find(t => t.id === taskId);
     if (!task) return;
     
+    console.log('Task data:', task);
+    console.log('Due date value:', task.due_date);
+    console.log('Due date type:', typeof task.due_date);
+    
     document.getElementById('edit_task_title').value = task.title || '';
     document.getElementById('edit_task_description').value = task.description || '';
     document.getElementById('edit_task_status').value = task.status || 'pending';
@@ -251,20 +255,8 @@ window.openEditTaskModal = function(taskId) {
     document.getElementById('edit_task_type').value = task.type || 'feature';
     document.getElementById('edit_task_module_id').value = task.module_id || '';
     
-    // Format the due_date properly for date input (YYYY-MM-DD)
-    if (task.due_date) {
-        // Handle both string dates and date objects
-        let formattedDate = task.due_date;
-        if (typeof formattedDate === 'string') {
-            // If it's already a string, extract just YYYY-MM-DD part
-            formattedDate = formattedDate.split('T')[0].split(' ')[0];
-        } else if (formattedDate instanceof Date) {
-            formattedDate = formattedDate.toISOString().split('T')[0];
-        }
-        document.getElementById('edit_task_due_date').value = formattedDate;
-    } else {
-        document.getElementById('edit_task_due_date').value = '';
-    }
+    // Due date is now always a simple string in YYYY-MM-DD format from the controller
+    document.getElementById('edit_task_due_date').value = task.due_date || '';
     
     document.getElementById('edit_task_notes').value = task.notes || '';
     
