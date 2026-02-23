@@ -63,7 +63,7 @@ class ProjectManagementController extends Controller
 
         $module->update($validated);
 
-        return redirect()->route('master.project-management')->with('success', 'Module updated successfully');
+        return redirect()->route('project-management.index')->with('success', 'Module updated successfully');
     }
 
     public function destroyModule(ProjectModule $module)
@@ -111,7 +111,7 @@ class ProjectManagementController extends Controller
 
         $task->update($validated);
 
-        return redirect()->route('master.project-management')->with('success', 'Task updated successfully');
+        return redirect()->route('project-management.index')->with('success', 'Task updated successfully')->withFragment('tasks');
     }
 
     public function destroyTask(ProjectTask $task)
@@ -192,7 +192,7 @@ class ProjectManagementController extends Controller
 
         $bug->update($validated);
 
-        return redirect()->route('master.project-management')->with('success', 'Bug updated successfully');
+        return redirect()->route('project-management.index')->with('success', 'Bug updated successfully')->withFragment('bugs');
     }
 
     public function destroyBug(ProjectBug $bug)
@@ -256,7 +256,7 @@ class ProjectManagementController extends Controller
 
         $flow->update($validated);
 
-        return redirect()->route('master.project-management')->with('success', 'Flow diagram updated successfully');
+        return redirect()->route('project-management.index')->with('success', 'Flow diagram updated successfully')->withFragment('flows');
     }
 
     public function destroyFlow(ProjectFlow $flow)
@@ -286,11 +286,11 @@ class ProjectManagementController extends Controller
             \Artisan::call('project:scan', $fresh ? ['--fresh' => true] : []);
             $output = \Artisan::output();
             
-            return redirect()->route('master.project-management')
+            return redirect()->route('project-management.index')
                 ->with('success', 'Project scan completed successfully!')
                 ->with('scan_output', $output);
         } catch (\Exception $e) {
-            return redirect()->route('master.project-management')
+            return redirect()->route('project-management.index')
                 ->with('error', 'Scan failed: ' . $e->getMessage());
         }
     }

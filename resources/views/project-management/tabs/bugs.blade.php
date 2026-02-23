@@ -8,7 +8,9 @@
 
     <div class="space-y-3">
         @forelse($bugs as $bug)
-            <div class="border rounded-lg p-4 bg-white hover:shadow-md transition">
+            <div class="border rounded-lg p-4 bg-white hover:shadow-md transition cursor-pointer bug-card"
+                 data-bug-id="{{ $bug->id }}"
+                 onclick="window.openEditBugModal && window.openEditBugModal({{ $bug->id }})">
                 <div class="flex justify-between items-start">
                     <div class="flex-1">
                         <div class="flex items-center gap-2 mb-2">
@@ -48,8 +50,8 @@
                             </div>
                         @endif
                     </div>
-                    <div class="flex gap-2">
-                        <form method="POST" action="{{ route('project-management.bug.toggle-status', $bug) }}" class="inline">
+                    <div class="flex gap-2" onclick="event.stopPropagation()">
+                        <form method="POST" action="{{ route('project-management.bug.toggle-status', $bug) }}" class="inline" onclick="event.stopPropagation()">
                             @csrf
                             @method('PATCH')
                             <button type="submit" class="px-3 py-1 text-sm rounded
@@ -65,8 +67,8 @@
                                 @endif
                             </button>
                         </form>
-                        <button onclick="openEditBugModal({{ $bug->id }})" class="px-3 py-1 bg-blue-100 text-blue-600 hover:bg-blue-200 text-sm rounded">Edit</button>
-                        <button class="text-red-600 hover:text-red-900 text-sm" onclick="if(confirm('Delete bug report?')) document.getElementById('delete-bug-{{$bug->id}}').submit()">Delete</button>
+                        <button onclick="event.stopPropagation(); window.openEditBugModal({{ $bug->id }})" class="px-3 py-1 bg-blue-100 text-blue-600 hover:bg-blue-200 text-sm rounded">Edit</button>
+                        <button class="text-red-600 hover:text-red-900 text-sm" onclick="event.stopPropagation(); if(confirm('Delete bug report?')) document.getElementById('delete-bug-{{$bug->id}}').submit()">Delete</button>
                         <form id="delete-bug-{{$bug->id}}" method="POST" action="{{ route('project-management.bug.delete', $bug) }}" class="hidden">
                             @csrf
                             @method('DELETE')
@@ -168,7 +170,15 @@
 <script>
 const bugData = @json($bugs);
 
-function openEditBugModal(bugId) {
+window.openModal = window.openModal || function(id) {
+    document.getElementById(id).classList.remove('hidden');
+}
+
+window.closeModal = window.closeModal || function(id) {
+    document.getElementById(id).classList.add('hidden');
+}
+
+window.openEditBugModal = function(bugId) {
     const bug = bugData.find(b => b.id === bugId);
     if (!bug) return;
     

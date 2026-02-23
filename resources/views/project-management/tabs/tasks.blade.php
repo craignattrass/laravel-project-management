@@ -16,7 +16,10 @@
 
     <div class="space-y-3">
         @forelse($tasks as $task)
-            <div class="task-item border rounded-lg p-4 bg-white hover:shadow-md transition" data-status="{{ $task->status }}">
+            <div class="task-item border rounded-lg p-4 bg-white hover:shadow-md transition cursor-pointer" 
+                 data-status="{{ $task->status }}"
+                 data-task-id="{{ $task->id }}"
+                 onclick="window.openEditTaskModal && window.openEditTaskModal({{ $task->id }})">
                 <div class="flex justify-between items-start">
                     <div class="flex-1">
                         <div class="flex items-center gap-2 mb-2">
@@ -55,8 +58,8 @@
                             </div>
                         @endif
                     </div>
-                    <div class="flex gap-2">
-                        <form method="POST" action="{{ route('project-management.task.toggle-status', $task) }}" class="inline">
+                    <div class="flex gap-2" onclick="event.stopPropagation()">
+                        <form method="POST" action="{{ route('project-management.task.toggle-status', $task) }}" class="inline" onclick="event.stopPropagation()">
                             @csrf
                             @method('PATCH')
                             <button type="submit" class="px-3 py-1 text-sm rounded
@@ -70,8 +73,8 @@
                                 @endif
                             </button>
                         </form>
-                        <button onclick="openEditTaskModal({{ $task->id }})" class="px-3 py-1 bg-blue-100 text-blue-600 hover:bg-blue-200 text-sm rounded">Edit</button>
-                        <button class="text-red-600 hover:text-red-900 text-sm" onclick="if(confirm('Delete task?')) document.getElementById('delete-task-{{$task->id}}').submit()">Delete</button>
+                        <button onclick="event.stopPropagation(); window.openEditTaskModal({{ $task->id }})" class="px-3 py-1 bg-blue-100 text-blue-600 hover:bg-blue-200 text-sm rounded">Edit</button>
+                        <button class="text-red-600 hover:text-red-900 text-sm" onclick="event.stopPropagation(); if(confirm('Delete task?')) document.getElementById('delete-task-{{$task->id}}').submit()">Delete</button>
                         <form id="delete-task-{{$task->id}}" method="POST" action="{{ route('project-management.task.delete', $task) }}" class="hidden">
                             @csrf
                             @method('DELETE')
@@ -229,7 +232,15 @@
 <script>
 const taskData = @json($tasks);
 
-function openEditTaskModal(taskId) {
+window.openModal = function(id) {
+    document.getElementById(id).classList.remove('hidden');
+}
+
+window.closeModal = function(id) {
+    document.getElementById(id).classList.add('hidden');
+}
+
+window.openEditTaskModal = function(taskId) {
     const task = taskData.find(t => t.id === taskId);
     if (!task) return;
     
@@ -239,7 +250,16 @@ function openEditTaskModal(taskId) {
     document.getElementById('edit_task_priority').value = task.priority || 'medium';
     document.getElementById('edit_task_type').value = task.type || 'feature';
     document.getElementById('edit_task_module_id').value = task.module_id || '';
-    document.getElementById('edit_task_due_date').value = task.due_date || '';
+    
+    // Format the due_date properly for date input (YYYY-MM-DD)
+    if (task.due_date) {
+        const date = new Date(task.due_date);
+        const formattedDate = date.toISOString().split('T')[0];
+        document.getElementById('edit_task_due_date').value = formattedDate;
+    } else {
+        document.getElementById('edit_task_due_date').value = '';
+    }
+    
     document.getElementById('edit_task_notes').value = task.notes || '';
     
     document.getElementById('editTaskForm').action = `/project-management/task/${taskId}`;

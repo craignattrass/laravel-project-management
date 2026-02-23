@@ -10,10 +10,10 @@
 
     <div class="space-y-6">
         @forelse($flows as $flow)
-            <div class="border rounded-lg bg-white p-6">
+            <div class="border rounded-lg bg-white p-6 flow-card" data-flow-id="{{ $flow->id }}">
                 <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ $flow->name }}</h3>
+                    <div class="flex-1 cursor-pointer flow-header" onclick="window.openEditFlowModal && window.openEditFlowModal({{ $flow->id }})">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-1 hover:text-purple-600 transition">{{ $flow->name }}</h3>
                         @if($flow->description)
                             <p class="text-sm text-gray-600 mb-2">{{ $flow->description }}</p>
                         @endif
@@ -25,7 +25,7 @@
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="openEditFlowModal({{ $flow->id }})" class="px-3 py-1 bg-blue-100 text-blue-600 hover:bg-blue-200 text-sm rounded">Edit</button>
+                        <button onclick="window.openEditFlowModal({{ $flow->id }})" class="px-3 py-1 bg-blue-100 text-blue-600 hover:bg-blue-200 text-sm rounded">Edit</button>
                         <button class="text-red-600 hover:text-red-900 text-sm" onclick="if(confirm('Delete flow diagram?')) document.getElementById('delete-flow-{{$flow->id}}').submit()">Delete</button>
                         <form id="delete-flow-{{$flow->id}}" method="POST" action="{{ route('project-management.flow.delete', $flow) }}" class="hidden">
                             @csrf
@@ -190,7 +190,15 @@
 <script>
 const flowData = @json($flows);
 
-function openEditFlowModal(flowId) {
+window.openModal = window.openModal || function(id) {
+    document.getElementById(id).classList.remove('hidden');
+}
+
+window.closeModal = window.closeModal || function(id) {
+    document.getElementById(id).classList.add('hidden');
+}
+
+window.openEditFlowModal = function(flowId) {
     const flow = flowData.find(f => f.id === flowId);
     if (!flow) return;
     
